@@ -9,12 +9,15 @@
 import UIKit
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, ViewModelProvider {
 
-
+    var baseViewModel: BaseViewModel = try! BaseViewModel(storageLocation: .onDisk("/Users/jason/bank.db"))
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+
+        let path = Bundle.main.path(forResource: "db_create", ofType: "sql")!
+        try! baseViewModel.db.execute(contentsOfFile: path)
+        try! baseViewModel.load("branches.json", in: .main, into: "branches")
         return true
     }
 

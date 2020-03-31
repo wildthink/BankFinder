@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -15,6 +15,15 @@
 		96EA414C2432EA6C002F20A5 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 96EA414A2432EA6C002F20A5 /* LaunchScreen.storyboard */; };
 		96EA41572432EA6D002F20A5 /* BankFinderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96EA41562432EA6D002F20A5 /* BankFinderTests.swift */; };
 		96EA41622432EA6D002F20A5 /* BankFinderUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96EA41612432EA6D002F20A5 /* BankFinderUITests.swift */; };
+		96EA41712433387C002F20A5 /* SQift in Frameworks */ = {isa = PBXBuildFile; productRef = 96EA41702433387C002F20A5 /* SQift */; };
+		96EA4173243338D6002F20A5 /* db_create.sql in Resources */ = {isa = PBXBuildFile; fileRef = 96EA4172243338D6002F20A5 /* db_create.sql */; };
+		96EA4175243338FD002F20A5 /* Bindings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96EA4174243338FD002F20A5 /* Bindings.swift */; };
+		96EA417724333AC5002F20A5 /* UIKitExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96EA417624333AC5002F20A5 /* UIKitExtensions.swift */; };
+		96EA417924333CF7002F20A5 /* BaseViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96EA417824333CF7002F20A5 /* BaseViewModel.swift */; };
+		96EA417B2433584B002F20A5 /* branches.json in Resources */ = {isa = PBXBuildFile; fileRef = 96EA417A2433584B002F20A5 /* branches.json */; };
+		96EA417E24335E51002F20A5 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 96EA417D24335E51002F20A5 /* README.md */; };
+		96EA41802433A083002F20A5 /* TableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96EA417F2433A083002F20A5 /* TableViewController.swift */; };
+		96EA41822433F870002F20A5 /* SQiftExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96EA41812433F870002F20A5 /* SQiftExtensions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -49,6 +58,14 @@
 		96EA415D2432EA6D002F20A5 /* BankFinderUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BankFinderUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		96EA41612432EA6D002F20A5 /* BankFinderUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BankFinderUITests.swift; sourceTree = "<group>"; };
 		96EA41632432EA6D002F20A5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		96EA4172243338D6002F20A5 /* db_create.sql */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = db_create.sql; sourceTree = "<group>"; };
+		96EA4174243338FD002F20A5 /* Bindings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Bindings.swift; sourceTree = "<group>"; };
+		96EA417624333AC5002F20A5 /* UIKitExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIKitExtensions.swift; sourceTree = "<group>"; };
+		96EA417824333CF7002F20A5 /* BaseViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseViewModel.swift; sourceTree = "<group>"; };
+		96EA417A2433584B002F20A5 /* branches.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = branches.json; sourceTree = "<group>"; };
+		96EA417D24335E51002F20A5 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		96EA417F2433A083002F20A5 /* TableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableViewController.swift; sourceTree = "<group>"; };
+		96EA41812433F870002F20A5 /* SQiftExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SQiftExtensions.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,6 +73,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				96EA41712433387C002F20A5 /* SQift in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -79,6 +97,7 @@
 		96EA41332432EA67002F20A5 = {
 			isa = PBXGroup;
 			children = (
+				96EA417D24335E51002F20A5 /* README.md */,
 				96EA413E2432EA68002F20A5 /* BankFinder */,
 				96EA41552432EA6D002F20A5 /* BankFinderTests */,
 				96EA41602432EA6D002F20A5 /* BankFinderUITests */,
@@ -99,10 +118,17 @@
 		96EA413E2432EA68002F20A5 /* BankFinder */ = {
 			isa = PBXGroup;
 			children = (
+				96EA41452432EA68002F20A5 /* Main.storyboard */,
 				96EA413F2432EA68002F20A5 /* AppDelegate.swift */,
+				96EA417C2433585F002F20A5 /* Data */,
+				96EA4172243338D6002F20A5 /* db_create.sql */,
+				96EA4174243338FD002F20A5 /* Bindings.swift */,
+				96EA417824333CF7002F20A5 /* BaseViewModel.swift */,
+				96EA417F2433A083002F20A5 /* TableViewController.swift */,
+				96EA41812433F870002F20A5 /* SQiftExtensions.swift */,
+				96EA417624333AC5002F20A5 /* UIKitExtensions.swift */,
 				96EA41412432EA68002F20A5 /* SceneDelegate.swift */,
 				96EA41432432EA68002F20A5 /* ViewController.swift */,
-				96EA41452432EA68002F20A5 /* Main.storyboard */,
 				96EA41482432EA6C002F20A5 /* Assets.xcassets */,
 				96EA414A2432EA6C002F20A5 /* LaunchScreen.storyboard */,
 				96EA414D2432EA6C002F20A5 /* Info.plist */,
@@ -128,6 +154,14 @@
 			path = BankFinderUITests;
 			sourceTree = "<group>";
 		};
+		96EA417C2433585F002F20A5 /* Data */ = {
+			isa = PBXGroup;
+			children = (
+				96EA417A2433584B002F20A5 /* branches.json */,
+			);
+			path = Data;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -144,6 +178,9 @@
 			dependencies = (
 			);
 			name = BankFinder;
+			packageProductDependencies = (
+				96EA41702433387C002F20A5 /* SQift */,
+			);
 			productName = BankFinder;
 			productReference = 96EA413C2432EA68002F20A5 /* BankFinder.app */;
 			productType = "com.apple.product-type.application";
@@ -216,6 +253,9 @@
 				Base,
 			);
 			mainGroup = 96EA41332432EA67002F20A5;
+			packageReferences = (
+				96EA416F2433387C002F20A5 /* XCRemoteSwiftPackageReference "SQift" */,
+			);
 			productRefGroup = 96EA413D2432EA68002F20A5 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -232,8 +272,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				96EA417E24335E51002F20A5 /* README.md in Resources */,
+				96EA4173243338D6002F20A5 /* db_create.sql in Resources */,
 				96EA414C2432EA6C002F20A5 /* LaunchScreen.storyboard in Resources */,
 				96EA41492432EA6C002F20A5 /* Assets.xcassets in Resources */,
+				96EA417B2433584B002F20A5 /* branches.json in Resources */,
 				96EA41472432EA68002F20A5 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -260,8 +303,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				96EA41442432EA68002F20A5 /* ViewController.swift in Sources */,
+				96EA41802433A083002F20A5 /* TableViewController.swift in Sources */,
 				96EA41402432EA68002F20A5 /* AppDelegate.swift in Sources */,
+				96EA4175243338FD002F20A5 /* Bindings.swift in Sources */,
 				96EA41422432EA68002F20A5 /* SceneDelegate.swift in Sources */,
+				96EA417724333AC5002F20A5 /* UIKitExtensions.swift in Sources */,
+				96EA417924333CF7002F20A5 /* BaseViewModel.swift in Sources */,
+				96EA41822433F870002F20A5 /* SQiftExtensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -590,6 +638,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		96EA416F2433387C002F20A5 /* XCRemoteSwiftPackageReference "SQift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/wildthink/SQift";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		96EA41702433387C002F20A5 /* SQift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 96EA416F2433387C002F20A5 /* XCRemoteSwiftPackageReference "SQift" */;
+			productName = SQift;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 96EA41342432EA67002F20A5 /* Project object */;
 }
