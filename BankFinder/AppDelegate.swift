@@ -15,9 +15,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate, ViewModelProvider {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
 
+        // Reset the Database
         let path = Bundle.main.path(forResource: "db_create", ofType: "sql")!
         try! baseViewModel.db.execute(contentsOfFile: path)
+        
+        // Populate the tables with bundled JSON data
         try! baseViewModel.load("branches.json", in: .main, into: "branches")
+        
         return true
     }
 

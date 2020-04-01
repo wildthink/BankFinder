@@ -23,14 +23,9 @@ public class TableViewController: UITableViewController {
     var cellIdentifier: String = "main"
 
     var dbids: [Int] = []
-    var test: String? // for developer reference
 
     public override func refresh(from model: ViewModel) {
         guard let table = modelId else { return }
-
-//        if let searchField = searchField, let searchId = searchId {
-//            test = model.sql_predicate(field: searchField, search: searchId)
-//        }
         dbids = model.indentifiers(for: table, filter: searchId, filterField: searchField)
         tableView.reloadData()
     }
@@ -40,18 +35,7 @@ public class TableViewController: UITableViewController {
         if let viewModel = viewModel {
             refresh(from: viewModel)
         }
-//        coordinator?.willPresent(controller: self)
     }
-
-//    open override func viewDidAppear(_ animated: Bool) {
-//        super.viewDidAppear(animated)
-//        coordinator?.didPresent(controller: self)
-//    }
-
-//    public override func viewDidDisappear(_ animated: Bool) {
-//        super.viewDidDisappear(animated)
-//        coordinator?.wasDismissed(controller: self)
-//    }
 
     override public func viewDidLoad() {
         super.viewDidLoad()

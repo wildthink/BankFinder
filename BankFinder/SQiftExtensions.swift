@@ -48,7 +48,6 @@ extension Connection {
             CREATE VIEW \(table) IF NOT EXISTS AS SELECT \(formatted_cols) from \(table)
         """
 
-//        try execute("DROP VIEW IF EXISTS \(table)")
         try execute(sql)
     }
 

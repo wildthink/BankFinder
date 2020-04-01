@@ -1,6 +1,5 @@
 //
-//  Presenter.swift
-//  ATMFinder_SQLite
+//  Bindings.swift
 //
 //  Created by Jobe, Jason on 3/10/20.
 //  Copyright © 2020 Jobe, Jason. All rights reserved.
@@ -8,27 +7,16 @@
 
 import UIKit
 
-/*
-@objc public protocol UIPresenter: NSObjectProtocol {
-    func refresh(from model: BaseViewModel)
-}
-
-extension UIViewController: UIPresenter {
-    @objc public func refresh(from model: BaseViewModel) {}
-}
-
-
-// MARK: - Default SearchBarDelegate 
+/// MARK: - Default SearchBarDelegate
 extension UIViewController: UISearchBarDelegate {
     public func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        let key = searchBar.presented ?? "search"
-//        print (#line, key, searchText)
-        BaseViewModel.shared?.set(key, to: searchText)
+        let key = searchBar.modelId ?? "search"
+        BaseViewModel.shared?.set(env: key, to: searchText)
     }
 }
-*/
 
 public extension UIViewController {
+
     func visit(visibleOnly: Bool = true, _ call: (UIViewController) -> Void) {
         call(self)
         let kids = visibleOnly ? self.visibleViewControllers : self.children
@@ -36,14 +24,35 @@ public extension UIViewController {
             kid.visit(visibleOnly: visibleOnly, call)
         }
     }
+    
+
+    func collectBindingValues() -> [String:Any] {
+        var map = [String:Any]()
+        return viewIfLoaded?.collectBindingValues(into: &map) ?? map
+    }
 }
 
 public extension UIView {
+
     func visit(_ call: (UIView) -> Void) {
         call(self)
         for kid in subviews {
             kid.visit(call)
         }
+    }
+    
+    func collectBindingValues() -> [String:Any] {
+         var map = [String:Any]()
+         return collectBindingValues(into: &map)
+    }
+    
+    func collectBindingValues(into map: inout [String:Any]) -> [String:Any] {
+        visit {
+            if let key = $0.modelId {
+                map[key] = $0.contentValue
+            }
+        }
+        return map
     }
 }
 
@@ -80,55 +89,13 @@ extension UIView {
         set { ib.namespace = newValue }
     }
 
-//    @IBInspectable
-//    public var entityId: String? {
-//        get { return ib.entityId }
-//        set { ib.entityId = newValue }
-//    }
-
     @IBInspectable
     public var modelId: String? {
         get { return ib.modelId }
         set { ib.modelId = newValue }
     }
-/*
-    @IBInspectable
-    public var presented: String? {
-        get { return ib.presented }
-        set { ib.presented = newValue }
-    }
-
-    @IBInspectable
-    public var ibEnabled: String? {
-        get { return ib.enabled }
-        set { ib.enabled = newValue }
-    }
-
-    @IBInspectable
-    public var ibVisible: String? {
-        get { return ib.visible }
-        set { ib.visible = newValue }
-    }
- */
 }
 
-/*
-extension UISearchBar {
-
-    @IBInspectable
-    public var searchTable: String? {
-        get { return ib.searchTable }
-        set { ib.searchTable = newValue }
-    }
-
-    @IBInspectable
-    public var searchCols: String? {
-        get { return ib.searchCols }
-        set { ib.searchCols = newValue }
-    }
-
-}
-*/
 
 extension UIViewController {
 
@@ -141,35 +108,11 @@ extension UIViewController {
         set { ib.namespace = newValue }
     }
 
-//    @IBInspectable
-//    public var entityId: String? {
-//        get { return ib.entityId }
-//        set { ib.entityId = newValue }
-//    }
-
     @IBInspectable
     public var modelId: String? {
         get { return ib.modelId }
         set { ib.modelId = newValue }
     }
-
-//    @IBInspectable
-//    public var presented: String? {
-//        get { return ib.presented }
-//        set { ib.presented = newValue }
-//    }
-//
-//    @IBInspectable
-//    public var ibEnabled: String? {
-//        get { return ib.enabled }
-//        set { ib.enabled = newValue }
-//    }
-//
-//    @IBInspectable
-//    public var ibVisible: String? {
-//        get { return ib.visible }
-//        set { ib.visible = newValue }
-//    }
 }
 
 extension UIResponder {

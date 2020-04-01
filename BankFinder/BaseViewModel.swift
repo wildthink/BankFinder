@@ -9,9 +9,17 @@ import Foundation
 import SQift
 
 //
-func trace(line: Int = #line, file: String = #file, _ msg: String = "") {
-    Swift.print("TRACE", line, msg, "in", file)
+extension NSObject {
+    func trace(line: Int = #line, file: String = #file, function: String = #function, _ msg: String = "") {
+        let name = type(of: self)
+        Swift.print("TRACE", line, name, function, msg)
+    }
 }
+
+func trace(line: Int = #line, file: String = #file, function: String = #function, _ msg: String = "") {
+    Swift.print("TRACE", line, function, msg)
+}
+
 //
 
 public protocol FormValuesProvider {
@@ -30,21 +38,18 @@ public class BaseViewModel: NSObject {
     
     public var db: AppDatabase
     
-//    var dbc: Connection!
-//    public var actions: [TargetAction] = []
-
     init (storageLocation: StorageLocation = .inMemory) throws {
 
-//        self.dbc = try Connection(storageLocation: storageLocation)
         db = try AppDatabase(storageLocation: storageLocation)
         super.init()
-        try configureDatabasee()
+        try configureDatabase()
         if BaseViewModel.shared == nil {
             BaseViewModel.shared = self
         }
     }
 
     @objc func didCommit() {
+        trace()
         // NOTE: defer the action to avoid infinite loop
 //        actions.forEach { $0.performAction(with: self) }
     }
@@ -57,36 +62,6 @@ public class BaseViewModel: NSObject {
         db.get(env: env) as? A ?? alt
     }
     
-    /*
-    func set(_ key: String, to value: Any) {
-        let value_s = value is String ? "'\(value)'" : String(describing: value)
-        try? dbc.transaction {
-            try? dbc.execute("DELETE FROM app WHERE key = '\(key)'")
-            try? dbc.execute("INSERT INTO app (key, value) VALUES('\(key)',\(value_s))")
-        }
-    }
-
-    func get(_ key: String, defaultValue: Any? = nil) -> Any? {
-        let sql: SQL = "SELECT value FROM app WHERE key = ? LIMIT 1"
-        let results = try? dbc.query(sql, [key])
-        return results?.value(at: 0) ?? defaultValue
-    }
-
-    func get(intValue key: String, defaultValue: Int? = nil) -> Int? {
-        let sql: SQL = "SELECT value FROM app WHERE key = ? LIMIT 1"
-        let results = try? dbc.query(sql, [key])
-
-        let value = results?.value(at: 0)
-
-        if let ival = value as? Int64 {
-            return Int(ival)
-        } else
-        if let ival = value as? Int {
-            return ival
-        }
-        return defaultValue
-    }
- */
     var handleMissingResults: ((Any.Type, _ table: String, _ predicate: String?) -> Void)?
     
     func noResultsForFetch(of type: Any.Type, from table: String, where predicate: String?) {
@@ -103,10 +78,6 @@ public class BaseViewModel: NSObject {
             whereClause = " WHERE \(test)"
         }
 
-//        if let searchField = searchField,
-//           let test = sql_predicate(field: searchField, search: searchId) {
-//            whereClause = " WHERE \(test)"
-//        }
         if let limit = limit  {
             limitClause = " LIMIT \(limit)"
         }
@@ -138,23 +109,10 @@ public class BaseViewModel: NSObject {
         }
         return nil
     }
-    /*
-    func execute(contentsOfFile file: String, in bundle: Bundle = Bundle.main) throws {
-        var sql: String? = nil
-        if FileManager().fileExists(atPath: file) {
-            sql = try String(contentsOfFile: file)
-        } else if let rpath = bundle.path(forResource: file, ofType: "") {
-            sql = try String(contentsOfFile: rpath)
-        }
-        guard let str = sql else { throw ViewModelError.MissingBootFile }
-        try dbc.transaction {
-            try dbc.execute(str)
-        }
-    }
-*/
+
     var commitHook: Any?
     
-    func configureDatabasee() throws {
+    func configureDatabase() throws {
         try db.executeWrite {
             $0.commitHook { [weak self] () -> Bool in
                 // We call the perform so we let this event complete and return
@@ -186,16 +144,12 @@ public class BaseViewModel: NSObject {
             plist = package
         }
         guard let items = plist as? [Any] else { throw ViewModelError.InvalidSerialization }
-//        guard let items = (package as? NSObject)?.value(forKeyPath: key) as? [Any]
-//            else { throw ViewModelError.InvalidSerialization }
 
-        try db.executeWrite {
+        try db.executeWrite(.immediate) {
             for item in items {
                 guard let dict = item as? [String:Any] else { continue }
                 try $0.insert(into: table, from: dict)
             }
-//            let rec_count = count(table: table)
-//            Swift.print (#line, "Loaded", rec_count, "records into", table)
         }
     }
 
@@ -257,14 +211,7 @@ extension Connection {
 // MARK: SQift Method Wrappers
 
 extension BaseViewModel {
-//    func indentifiers(for table: String, where test: String? = nil) -> [Int] {
-//        return dbc.indentifiers(for: table, where: test)
-//    }
-//
-//    func count(table: String, where test: String? = nil) -> Int {
-//        return dbc.count(table, where: test)
-//    }
-//
+
     func select(_ col: String, from table: String, id: Int) throws -> Any? {
         var result: Any?
         try db.executeRead {
@@ -280,12 +227,6 @@ extension BaseViewModel {
         }
         return result as? [[String:Any]] ?? []
     }
-
-//    func select(_ cols: [String], from table: String, where test: String? = nil) throws -> [[String:Any]] {
-//        try db.executeRead {
-//            return try $0.select(cols, from: table, where: test)
-//        }
-//    }
 
     func fetch (_ sql: SQift.SQL, _ parameters: [SQift.Bindable?], _ body: (Row) -> Void) throws {
         try db.executeRead {
@@ -331,7 +272,6 @@ extension ViewModel {
 extension BaseViewModel: ViewModel {
     
     public func refresh(view: UIView, from table: String, id: Int) {
-        trace()
         view.visit {
             guard let key = $0.modelId else { return }
             let value = try? select(key, from: table, id: id)

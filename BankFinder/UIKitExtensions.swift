@@ -33,28 +33,8 @@ public struct ViewControllerKey {
 
 }
 
-//extension UIView {
-//    public var viewController: UIViewController? {
-//        return (next as? UIViewController) ?? superview?.viewController
-//    }
-//}
-
-/*
-extension UIView: FormValuesProvider {
-    public func formValues() -> [String:Any] {
-        var values: [String:Any] = [:]
-        visit {
-            if let key = $0.presented {
-                values[key] = $0.contentValue
-            }
-        }
-        return values
+extension UIView {
+    public var viewController: UIViewController? {
+        return (next as? UIViewController) ?? superview?.viewController
     }
 }
-
-extension UIViewController: FormValuesProvider {
-    public func formValues() -> [String:Any] {
-        viewIfLoaded?.formValues() ?? [:]
-    }
-}
-*/
