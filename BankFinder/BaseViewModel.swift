@@ -34,6 +34,25 @@ enum ViewModelError: String, Error {
 }
 
 public class BaseViewModel: NSObject {
+    
+    //     public typealias UpdateHook = (UpdateHookType, _ databaseName: String?, _ tableName: String?, _ rowID: Int64) -> Void
+
+    @objc class DBUpdateLog: NSObject {
+        var op: Connection.UpdateHookType
+        var db: String
+        var table: String
+        var row: Int64 = 0
+        
+        @objc override var description: String { "DBUpdate(\(op) \(db) \(table) \(row))" }
+        
+        init(op: Connection.UpdateHookType, db: String?, table: String?, row: Int64) {
+            self.op = op
+            self.db = db ?? "<db>"
+            self.table = table ?? "<table>"
+            self.row = row
+        }
+    }
+    
     static var shared: BaseViewModel?
     
     public var db: AppDatabase
@@ -48,8 +67,14 @@ public class BaseViewModel: NSObject {
         }
     }
 
-    @objc func didCommit() {
+    @objc func willCommit() {
         trace()
+        // NOTE: defer the action to avoid infinite loop
+//        actions.forEach { $0.performAction(with: self) }
+    }
+
+    @objc func didUpdate(_ log: DBUpdateLog) {
+        Swift.print(log.description)
         // NOTE: defer the action to avoid infinite loop
 //        actions.forEach { $0.performAction(with: self) }
     }
@@ -110,6 +135,23 @@ public class BaseViewModel: NSObject {
         return nil
     }
 
+    func filterPredicate(from text: String?, asClause: Bool = false) -> String? {
+        guard let text = text else { return nil }
+        let parts = text.components(separatedBy: CharacterSet(charactersIn: "./"))
+        switch parts.count {
+        case 1:
+            return asClause ? "WHERE \(text)" : text
+        case 2:
+            if let test = sql_predicate(field: parts[1], search: parts[0]) {
+                return asClause ? "WHERE \(test)" : test
+            } else {
+                return nil
+            }
+        default:
+            return nil
+        }
+    }
+    
     var commitHook: Any?
     
     func configureDatabase() throws {
@@ -117,12 +159,57 @@ public class BaseViewModel: NSObject {
             $0.commitHook { [weak self] () -> Bool in
                 // We call the perform so we let this event complete and return
                 // before refreshing with the next state
-                self?.perform(#selector(BaseViewModel.didCommit), with: nil, afterDelay: 0)
+                self?.perform(#selector(BaseViewModel.willCommit), with: nil, afterDelay: 0)
                 return false
+            }
+            //     public typealias UpdateHook = (UpdateHookType, _ databaseName: String?, _ tableName: String?, _ rowID: Int64) -> Void
+
+            $0.updateHook { (op, database, table, row) in
+                let log = DBUpdateLog(op: op, db: database, table: table, row: row)
+                self.perform(#selector(BaseViewModel.didUpdate), with: log, afterDelay: 0)
             }
         }
     }
 
+    func load (url: URL, from key: String? = nil, into table: String) {
+
+        URLSession.shared.dataTask(with: url) { (data, response, error) in
+            if let error = error {
+                Swift.print (error)
+                return
+            }
+            guard let data = data else { return }
+            do {
+                if let package = try JSONSerialization.jsonObject(with: data, options: []) as? NSObject {
+                    try self.load(json: package, from: key, into: table)
+                }
+            }
+            catch {
+                Swift.print ("ERROR loading \(url)")
+            }
+        }
+    }
+
+    func load(json: NSObject, from key: String? = nil, into table: String) throws {
+
+        var plist: Any?
+
+        if let key = key, !key.isEmpty {
+            plist = json.value(forKeyPath: key)
+        } else {
+            plist = json
+        }
+        guard let items = plist as? [Any] else { throw ViewModelError.InvalidSerialization }
+
+        try db.executeWrite(.immediate) {
+            for item in items {
+                guard let dict = item as? [String:Any] else { continue }
+                try $0.insert(into: table, from: dict)
+            }
+        }
+
+    }
+    
     func load (_ file: String, in bundle: Bundle = Bundle.main, from key: String? = nil, into table: String) throws {
         var path: String
         if FileManager().fileExists(atPath: file) {
@@ -135,22 +222,24 @@ public class BaseViewModel: NSObject {
         let url = URL(fileURLWithPath: path)
         let data = try Data(contentsOf: url)
 
-        let package = try JSONSerialization.jsonObject(with: data, options: [])
+        if let package = try JSONSerialization.jsonObject(with: data, options: []) as? NSObject {
+            try load(json: package, from: key, into: table)
+        } else { throw ViewModelError.InvalidSerialization }
         
-        var plist: Any?
-        if let key = key, !key.isEmpty {
-            plist = (package as? NSObject)?.value(forKeyPath: key)
-        } else {
-            plist = package
-        }
-        guard let items = plist as? [Any] else { throw ViewModelError.InvalidSerialization }
-
-        try db.executeWrite(.immediate) {
-            for item in items {
-                guard let dict = item as? [String:Any] else { continue }
-                try $0.insert(into: table, from: dict)
-            }
-        }
+//        var plist: Any?
+//        if let key = key, !key.isEmpty {
+//            plist = (package as? NSObject)?.value(forKeyPath: key)
+//        } else {
+//            plist = package
+//        }
+//        guard let items = plist as? [Any] else { throw ViewModelError.InvalidSerialization }
+//
+//        try db.executeWrite(.immediate) {
+//            for item in items {
+//                guard let dict = item as? [String:Any] else { continue }
+//                try $0.insert(into: table, from: dict)
+//            }
+//        }
     }
 
 }
@@ -252,19 +341,9 @@ extension ViewModel {
     func get<A>(env: String, default alt: A?) -> A? {
         AppDatabase.shared.get(env: env) as? A ?? alt
     }
-    
-    func indentifiers(for table: String, filter: String?, filterField: String?) -> [Int] {
-        trace()
-        let results = NSMutableArray()
-        try? BaseViewModel.shared?.db.executeRead(.deferred) {
-            let sql: SQL = "SELECT id FROM \(table)"
-            try? $0.fetch(sql, []) { row in
-                if let int: Int = row.value(at: 0) {
-                    results.add(int)
-                }
-            }
-        }
-        return (results as? [Int]) ?? []
+        
+    func indentifiers(for table: String, filter: String?) -> [Int] {
+        BaseViewModel.shared?.indentifiers(for: table, filter: filter) ?? []
     }
 
 }
@@ -279,11 +358,30 @@ extension BaseViewModel: ViewModel {
         }
     }
     
-    func indentifiers(for table: String, filter: String?, filterField: String?) -> [Int] {
+//    func indentifiers(for table: String, filter: String?, filterField: String?) -> [Int] {
+//        trace()
+//        let results = NSMutableArray()
+//        try? BaseViewModel.shared?.db.executeRead(.deferred) {
+//            let sql: SQL = "SELECT id FROM \(table)"
+//            try? $0.fetch(sql, []) { row in
+//                if let int: Int = row.value(at: 0) {
+//                    results.add(int)
+//                }
+//            }
+//        }
+//        return (results as? [Int]) ?? []
+//    }
+
+    func indentifiers(for table: String, filter: String?) -> [Int] {
         trace()
         let results = NSMutableArray()
+        let sql: SQL
+        if let test = filterPredicate(from: filter, asClause: true) {
+            sql = "SELECT id FROM \(table) \(test)"
+        } else {
+            sql = "SELECT id FROM \(table)"
+        }
         try? BaseViewModel.shared?.db.executeRead(.deferred) {
-            let sql: SQL = "SELECT id FROM \(table)"
             try? $0.fetch(sql, []) { row in
                 if let int: Int = row.value(at: 0) {
                     results.add(int)

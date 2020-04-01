@@ -120,8 +120,8 @@
 			children = (
 				96EA41452432EA68002F20A5 /* Main.storyboard */,
 				96EA413F2432EA68002F20A5 /* AppDelegate.swift */,
-				96EA417C2433585F002F20A5 /* Data */,
 				96EA4172243338D6002F20A5 /* db_create.sql */,
+				96EA417C2433585F002F20A5 /* Data */,
 				96EA4174243338FD002F20A5 /* Bindings.swift */,
 				96EA417824333CF7002F20A5 /* BaseViewModel.swift */,
 				96EA417F2433A083002F20A5 /* TableViewController.swift */,

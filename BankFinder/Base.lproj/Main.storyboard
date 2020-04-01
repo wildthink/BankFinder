@@ -53,9 +53,9 @@
                     </tableView>
                     <userDefinedRuntimeAttributes>
                         <userDefinedRuntimeAttribute type="string" keyPath="selectionKey" value="branch"/>
-                        <userDefinedRuntimeAttribute type="string" keyPath="searchId" value="search"/>
-                        <userDefinedRuntimeAttribute type="string" keyPath="searchField" value="name"/>
                         <userDefinedRuntimeAttribute type="string" keyPath="modelId" value="branches"/>
+                        <userDefinedRuntimeAttribute type="string" keyPath="cellIdentifier" value="main"/>
+                        <userDefinedRuntimeAttribute type="string" keyPath="filter" value="search/name"/>
                     </userDefinedRuntimeAttributes>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="yFQ-DE-oma" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>

@@ -1,4 +1,6 @@
 
+``` JSON
+// Object Shape
 Branch {
     _id,  name, phone_number: String
     hours: [String]
@@ -8,8 +10,11 @@ Branch {
     }
     geocode: { lat, lng }
 }
+```
 
 
+``` JSON
+// Exemplar JSON Data
 {
   "_id": "56c66be5a73e4927415071a4",
   "name": "LEE HIGHWAY/GEORGE MASON",
@@ -41,3 +46,5 @@ Branch {
     "lat": 38.8960952
   }
 },
+```
+

@@ -14,10 +14,7 @@ public class TableViewController: UITableViewController {
     var selectionKey: String?
 
     @IBInspectable
-    var searchId: String? = "search"
-
-    @IBInspectable
-    var searchField: String?
+    var filter: String?
 
     @IBInspectable
     var cellIdentifier: String = "main"
@@ -26,7 +23,7 @@ public class TableViewController: UITableViewController {
 
     public override func refresh(from model: ViewModel) {
         guard let table = modelId else { return }
-        dbids = model.indentifiers(for: table, filter: searchId, filterField: searchField)
+        dbids = model.indentifiers(for: table, filter: filter)
         tableView.reloadData()
     }
 
