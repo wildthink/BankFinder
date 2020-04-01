@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		96965C652435134A00EAB17C /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96965C642435134A00EAB17C /* NetworkExtension.framework */; };
 		96EA41402432EA68002F20A5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96EA413F2432EA68002F20A5 /* AppDelegate.swift */; };
 		96EA41422432EA68002F20A5 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96EA41412432EA68002F20A5 /* SceneDelegate.swift */; };
 		96EA41442432EA68002F20A5 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96EA41432432EA68002F20A5 /* ViewController.swift */; };
@@ -44,6 +45,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		96965C622435132700EAB17C /* BankFinder.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = BankFinder.entitlements; sourceTree = "<group>"; };
+		96965C642435134A00EAB17C /* NetworkExtension.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NetworkExtension.framework; path = System/Library/Frameworks/NetworkExtension.framework; sourceTree = SDKROOT; };
 		96EA413C2432EA68002F20A5 /* BankFinder.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BankFinder.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		96EA413F2432EA68002F20A5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		96EA41412432EA68002F20A5 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -74,6 +77,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				96EA41712433387C002F20A5 /* SQift in Frameworks */,
+				96965C652435134A00EAB17C /* NetworkExtension.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -94,6 +98,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		96965C632435134A00EAB17C /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				96965C642435134A00EAB17C /* NetworkExtension.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		96EA41332432EA67002F20A5 = {
 			isa = PBXGroup;
 			children = (
@@ -102,6 +114,7 @@
 				96EA41552432EA6D002F20A5 /* BankFinderTests */,
 				96EA41602432EA6D002F20A5 /* BankFinderUITests */,
 				96EA413D2432EA68002F20A5 /* Products */,
+				96965C632435134A00EAB17C /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -118,6 +131,7 @@
 		96EA413E2432EA68002F20A5 /* BankFinder */ = {
 			isa = PBXGroup;
 			children = (
+				96965C622435132700EAB17C /* BankFinder.entitlements */,
 				96EA41452432EA68002F20A5 /* Main.storyboard */,
 				96EA413F2432EA68002F20A5 /* AppDelegate.swift */,
 				96EA4172243338D6002F20A5 /* db_create.sql */,
@@ -482,6 +496,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = BankFinder/BankFinder.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 8S7Y6KVRU5;
 				INFOPLIST_FILE = BankFinder/Info.plist;
@@ -500,6 +515,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = BankFinder/BankFinder.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 8S7Y6KVRU5;
 				INFOPLIST_FILE = BankFinder/Info.plist;

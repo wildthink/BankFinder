@@ -68,13 +68,13 @@ public class BaseViewModel: NSObject {
     }
 
     @objc func willCommit() {
-        trace()
+//        trace()
         // NOTE: defer the action to avoid infinite loop
 //        actions.forEach { $0.performAction(with: self) }
     }
 
     @objc func didUpdate(_ log: DBUpdateLog) {
-        Swift.print(log.description)
+//        Swift.print(log.description)
         // NOTE: defer the action to avoid infinite loop
 //        actions.forEach { $0.performAction(with: self) }
     }
@@ -185,9 +185,9 @@ public class BaseViewModel: NSObject {
                 }
             }
             catch {
-                Swift.print ("ERROR loading \(url)")
+                Swift.print ("ERROR loading \(url): \(error)")
             }
-        }
+        }.resume()
     }
 
     func load(json: NSObject, from key: String? = nil, into table: String) throws {
@@ -306,6 +306,9 @@ extension BaseViewModel {
         try db.executeRead {
             result = try $0.select(col, from: table, id: id)
         }
+        if result == nil {
+            noResultsForFetch(of: Any.self, from: table, where: "id = \(id)")
+        }
         return result
     }
 
@@ -313,6 +316,9 @@ extension BaseViewModel {
         var result: Any?
         try db.executeRead {
             result = try $0.select(cols, from: table, where: test)
+        }
+        if result == nil {
+            noResultsForFetch(of: Any.self, from: table, where: test)
         }
         return result as? [[String:Any]] ?? []
     }
@@ -388,7 +394,11 @@ extension BaseViewModel: ViewModel {
                 }
             }
         }
-        return (results as? [Int]) ?? []
+        let list = (results as? [Int]) ?? []
+        if list.isEmpty {
+            noResultsForFetch(of: [Int].self, from: table, where: filter)
+        }
+        return list
     }
 
 }

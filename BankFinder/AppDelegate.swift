@@ -22,6 +22,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate, ViewModelProvider {
         // Populate the tables with bundled JSON data
         try! baseViewModel.load("branches.json", in: .main, into: "branches")
         
+        baseViewModel.handleMissingResults = { (type, table, predicate) in
+            Swift.print (#line, "NO DATA", table)
+            switch table {
+            case "atms":
+                 self.baseViewModel.load(url: .getATMs, from: "data", into: "atms")
+            default:
+                Swift.print (#line, "NO WAY TO GET", table)
+            }
+        }
+        
+        if let id = try? baseViewModel.select("id", from: "atms", id: 0) {
+            Swift.print ("Select \(id)")
+        }
+        
         return true
     }
 
@@ -38,7 +52,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, ViewModelProvider {
         // If any sessions were discarded while the application was not running, this will be called shortly after application:didFinishLaunchingWithOptions.
         // Use this method to release any resources that were specific to the discarded scenes, as they will not return.
     }
-
-
 }
 
+let nessie_api_key = ""
+
+extension URL {
+    static var getATMs: URL = URL(string: "http://api.reimaginebanking.com/atms?lat=38.9283&lng=-77.1753&rad=1&key=\(nessie_api_key)")!
+}
