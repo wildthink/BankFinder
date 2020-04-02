@@ -289,10 +289,11 @@ extension ViewModel {
 
 extension BaseViewModel: ViewModel {
     
-    public func refresh(view: UIView, from table: String, id: Int) {
+    public func refresh(view: UIView, from uri: String, id: Int) {
+        guard let mkey = ModelKey(uri) else { return }
         view.visit {
-            guard let key = $0.modelId else { return }
-            let value = try? select(key, from: table, id: id)
+            guard let key = ModelKey($0.modelId) else { return }
+            let value = try? select(key.column, from: mkey.table, id: id)
             $0.contentValue = value
         }
     }

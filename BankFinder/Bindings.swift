@@ -7,6 +7,61 @@
 
 import UIKit
 
+public struct ModelKey: CustomStringConvertible {
+    
+    let database: String = "main"
+    let table: String
+    let column: String
+    let filter: String?
+    var row: Int = 0
+    
+    public var description: String {
+        "\(database).\(table)/\(column)/\(filter ?? String(row))"
+    }
+}
+
+extension ModelKey {
+    public init?(_ uri: String?) {
+        guard let uri = uri else { return nil }
+        let parts = uri.components(separatedBy: "/")
+        switch parts.count {
+        case 1:
+            table = parts[0]
+            column = "*"
+            filter = nil
+        case 2:
+            table = parts[0]
+            column = parts[1]
+            filter = nil
+        case 3:
+            table = parts[0]
+            column = parts[1]
+            if let id = Int(parts[2]) {
+                filter = nil
+                row = id
+            } else {
+                filter = parts[2]
+            }
+        default:
+            return nil
+        }
+    }
+}
+
+public struct xSQLBuilder {
+    let mkey: ModelKey
+    // callable (...) -> String
+}
+
+extension ModelKey {
+    public typealias SQLBuilder = (Any...) -> String
+    public var sql: SQLBuilder {
+        return { (rest: Any...) in
+            return "<SQL>"
+        }
+    }
+}
+
 /// MARK: - Default SearchBarDelegate
 extension UIViewController: UISearchBarDelegate {
     public func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {

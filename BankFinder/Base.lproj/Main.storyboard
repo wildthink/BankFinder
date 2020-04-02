@@ -29,7 +29,7 @@
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                             <userDefinedRuntimeAttributes>
-                                                <userDefinedRuntimeAttribute type="string" keyPath="modelId" value="name"/>
+                                                <userDefinedRuntimeAttribute type="string" keyPath="modelId" value="Branch/name"/>
                                             </userDefinedRuntimeAttributes>
                                         </label>
                                         <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Subtitle" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="pZP-dS-vgK">
@@ -39,7 +39,7 @@
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                             <userDefinedRuntimeAttributes>
-                                                <userDefinedRuntimeAttribute type="string" keyPath="modelId" value="id"/>
+                                                <userDefinedRuntimeAttribute type="string" keyPath="modelId" value="branch/id"/>
                                             </userDefinedRuntimeAttributes>
                                         </label>
                                     </subviews>
@@ -55,12 +55,12 @@
                         <userDefinedRuntimeAttribute type="string" keyPath="selectionKey" value="branch"/>
                         <userDefinedRuntimeAttribute type="string" keyPath="modelId" value="branches"/>
                         <userDefinedRuntimeAttribute type="string" keyPath="cellIdentifier" value="main"/>
-                        <userDefinedRuntimeAttribute type="string" keyPath="filter" value="search/name"/>
+                        <userDefinedRuntimeAttribute type="string" keyPath="filter" value="search.name"/>
                     </userDefinedRuntimeAttributes>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="yFQ-DE-oma" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="117" y="129"/>
+            <point key="canvasLocation" x="77" y="124"/>
         </scene>
     </scenes>
 </document>
