@@ -102,6 +102,11 @@ public class TableViewController: UITableViewController {
     */
 
 
+    public override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        guard let selectionKey = selectionKey else { return }
+        try? viewModel?.set(env: "selected.\(selectionKey)", to: dbids[indexPath.row])
+    }
+    
     // MARK: - Navigation
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation

@@ -23,7 +23,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, ViewModelProvider {
         try! baseViewModel.load("branches.json", in: .main, into: "branches")
         
         baseViewModel.handleMissingResults = { (type, table, predicate) in
-            Swift.print (#line, "NO DATA", table)
+            Swift.print (#line, "NO DATA found for", table)
             switch table {
             case "atms":
                  self.baseViewModel.load(url: .getATMs, from: "data", into: "atms")
@@ -54,7 +54,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate, ViewModelProvider {
     }
 }
 
-let nessie_api_key = ""
+let iplist =  NSDictionary(contentsOfFile: Bundle.main.path(forResource: "Info", ofType: "plist")!)
+
+var nessie_api_key: String {
+    iplist?.value(forKey: "NessieAPIKey") as? String ?? "MissingAPIKey"
+}
+
 
 extension URL {
     static var getATMs: URL = URL(string: "http://api.reimaginebanking.com/atms?lat=38.9283&lng=-77.1753&rad=1&key=\(nessie_api_key)")!

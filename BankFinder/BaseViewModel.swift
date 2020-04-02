@@ -8,7 +8,7 @@
 import Foundation
 import SQift
 
-//
+// MARK: trace()
 extension NSObject {
     func trace(line: Int = #line, file: String = #file, function: String = #function, _ msg: String = "") {
         let name = type(of: self)
@@ -20,7 +20,6 @@ func trace(line: Int = #line, file: String = #file, function: String = #function
     Swift.print("TRACE", line, function, msg)
 }
 
-//
 
 public protocol FormValuesProvider {
     var namespace: String? { get }
@@ -35,8 +34,6 @@ enum ViewModelError: String, Error {
 
 public class BaseViewModel: NSObject {
     
-    //     public typealias UpdateHook = (UpdateHookType, _ databaseName: String?, _ tableName: String?, _ rowID: Int64) -> Void
-
     @objc class DBUpdateLog: NSObject {
         var op: Connection.UpdateHookType
         var db: String
@@ -68,18 +65,18 @@ public class BaseViewModel: NSObject {
     }
 
     @objc func willCommit() {
-//        trace()
-        // NOTE: defer the action to avoid infinite loop
-//        actions.forEach { $0.performAction(with: self) }
+        // NOTE: usee performAction(with:) to queue the
+        // notification in the next event loop after the commit
+        //  trace()
     }
 
     @objc func didUpdate(_ log: DBUpdateLog) {
-//        Swift.print(log.description)
-        // NOTE: defer the action to avoid infinite loop
-//        actions.forEach { $0.performAction(with: self) }
-    }
+        // NOTE: usee performAction(with:) to queue the
+        // notification in the next event loop after the commit
+        // Swift.print(log.description)
+     }
 
-    public func set(env: String, to value: Any) {
+    public func set(env: String, to value: Bindable) {
         try? db.set(env: env, to: value)
     }
     
@@ -155,6 +152,9 @@ public class BaseViewModel: NSObject {
     var commitHook: Any?
     
     func configureDatabase() throws {
+
+        try db.createApplicationDatabase()
+
         try db.executeWrite {
             $0.commitHook { [weak self] () -> Bool in
                 // We call the perform so we let this event complete and return
@@ -225,77 +225,10 @@ public class BaseViewModel: NSObject {
         if let package = try JSONSerialization.jsonObject(with: data, options: []) as? NSObject {
             try load(json: package, from: key, into: table)
         } else { throw ViewModelError.InvalidSerialization }
-        
-//        var plist: Any?
-//        if let key = key, !key.isEmpty {
-//            plist = (package as? NSObject)?.value(forKeyPath: key)
-//        } else {
-//            plist = package
-//        }
-//        guard let items = plist as? [Any] else { throw ViewModelError.InvalidSerialization }
-//
-//        try db.executeWrite(.immediate) {
-//            for item in items {
-//                guard let dict = item as? [String:Any] else { continue }
-//                try $0.insert(into: table, from: dict)
-//            }
-//        }
     }
 
 }
 
-/*
-extension String: Error {}
-
-extension Connection {
-    
-    /// This `insert` method is useful when it is desirable to insert  values
-    /// from a Dictionary.
-    ///
-    /// - Parameter table: The name of the table
-    ///
-    /// - Parameter plist: A Dictionary with values for a record.
-    ///
-    /// - Returns: Void
-    ///
-    /// - Throws: A `SQLiteError` if SQLite encounters an error stepping through the statement.
-    @discardableResult
-    public func insert(into table: String, from plist: [String:Any]) throws -> Int64 {
-        
-        var keys: [String] = []
-        var slots: [String] = []
-        var values: [Bindable?] = []
-
-        func asBindable(_ any: Any) -> Bindable? {
-            if let bind = any as? Bindable { return bind }
-            switch any {
-            case is NSArray: return (any as? [Any])
-            case is NSDictionary: return (any as? [String:Any])
-            case is NSString: return (any as? String)
-            case let num as NSNumber:
-                if num is Int { return num.intValue }
-                if num is Double { return num.doubleValue }
-                return (num as Any) as? Bindable
-            default:
-                return any as? Bindable
-            }
-        }
-        
-        for (key, val) in plist {
-            keys.append(key)
-            slots.append("?")
-            guard let bval = asBindable(val) else {
-                throw "Cannot insert non Bindable value \(val) into \(table) \(key)"
-            }
-            values.append(bval)
-        }
-        let sql: SQL = "INSERT INTO \(table) (\(keys.joined(separator: ","))) VALUES(\(slots.joined(separator: ",")))"
-        
-        try run(sql, values)
-        return lastInsertRowID
-    }
-}
-*/
 
 // MARK: SQift Method Wrappers
 
@@ -340,7 +273,7 @@ import UIKit
 
 extension ViewModel {
     
-    func set(env: String, to value: Any) throws {
+    func set(env: String, to value: Bindable) throws {
         try BaseViewModel.shared?.db.set(env: env, to: value)
     }
 
@@ -364,20 +297,6 @@ extension BaseViewModel: ViewModel {
         }
     }
     
-//    func indentifiers(for table: String, filter: String?, filterField: String?) -> [Int] {
-//        trace()
-//        let results = NSMutableArray()
-//        try? BaseViewModel.shared?.db.executeRead(.deferred) {
-//            let sql: SQL = "SELECT id FROM \(table)"
-//            try? $0.fetch(sql, []) { row in
-//                if let int: Int = row.value(at: 0) {
-//                    results.add(int)
-//                }
-//            }
-//        }
-//        return (results as? [Int]) ?? []
-//    }
-
     func indentifiers(for table: String, filter: String?) -> [Int] {
         trace()
         let results = NSMutableArray()
