@@ -32,15 +32,20 @@ enum ViewModelError: String, Error {
     case MissingData, MissingBootFile, InvalidSerialization
 }
 
+@objc public protocol BaseViewModelDelegate: NSObjectProtocol {
+    @objc optional func modelWillCommit(_ vm: BaseViewModel)
+    @objc optional func modelDidUpdate(_ vm: BaseViewModel, info: BaseViewModel.DBUpdateLog)
+}
+
 public class BaseViewModel: NSObject {
     
-    @objc class DBUpdateLog: NSObject {
+    @objc public class DBUpdateLog: NSObject {
         var op: Connection.UpdateHookType
         var db: String
         var table: String
         var row: Int64 = 0
         
-        @objc override var description: String { "DBUpdate(\(op) \(db) \(table) \(row))" }
+        @objc public override var description: String { "DBUpdate(\(op) \(db) \(table) \(row))" }
         
         init(op: Connection.UpdateHookType, db: String?, table: String?, row: Int64) {
             self.op = op
@@ -53,6 +58,7 @@ public class BaseViewModel: NSObject {
     static var shared: BaseViewModel?
     
     public var db: AppDatabase
+    public var delegate: BaseViewModelDelegate?
     
     init (storageLocation: StorageLocation = .inMemory) throws {
 
@@ -65,16 +71,12 @@ public class BaseViewModel: NSObject {
     }
 
     @objc func willCommit() {
-        // NOTE: usee performAction(with:) to queue the
-        // notification in the next event loop after the commit
-        //  trace()
+        delegate?.modelWillCommit?(self)
     }
 
     @objc func didUpdate(_ log: DBUpdateLog) {
-        // NOTE: usee performAction(with:) to queue the
-        // notification in the next event loop after the commit
-        // Swift.print(log.description)
-     }
+        delegate?.modelDidUpdate?(self, info: log)
+    }
 
     public func set(env: String, to value: Bindable) {
         try? db.set(env: env, to: value)

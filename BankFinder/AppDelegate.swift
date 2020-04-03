@@ -16,6 +16,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, ViewModelProvider {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
 
         // Reset the Database
+        baseViewModel.delegate = self
         let path = Bundle.main.path(forResource: "db_create", ofType: "sql")!
         try! baseViewModel.db.execute(contentsOfFile: path)
         
@@ -25,8 +26,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, ViewModelProvider {
         baseViewModel.handleMissingResults = { (type, table, predicate) in
             Swift.print (#line, "NO DATA found for", table)
             switch table {
-            case "atms":
+            case "atms", "atm":
                  self.baseViewModel.load(url: .getATMs, from: "data", into: "atms")
+            case "customers", "customer":
+                self.baseViewModel.load(url: .getCustomers, from: "results", into: "_customers")
             default:
                 Swift.print (#line, "NO WAY TO GET", table)
             }
@@ -54,6 +57,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate, ViewModelProvider {
     }
 }
 
+extension AppDelegate: BaseViewModelDelegate {
+    func modelWillCommit(_ vm: BaseViewModel) {
+        trace()
+        guard let window = SceneDelegate.
+//        vm.refresh(view: root, from: <#T##String#>, id: <#T##Int#>)
+    }
+}
+
 let iplist =  NSDictionary(contentsOfFile: Bundle.main.path(forResource: "Info", ofType: "plist")!)
 
 var nessie_api_key: String {
@@ -63,4 +74,8 @@ var nessie_api_key: String {
 
 extension URL {
     static var getATMs: URL = URL(string: "http://api.reimaginebanking.com/atms?lat=38.9283&lng=-77.1753&rad=1&key=\(nessie_api_key)")!
+
+    static var getCustomers: URL = URL(string: "http://api.reimaginebanking.com/enterprise/customers?key=\(nessie_api_key)")!
+
+    static var getAccounts: URL = URL(string: "http://api.reimaginebanking.com/customers/1/accounts?key=\(nessie_api_key)")!
 }
