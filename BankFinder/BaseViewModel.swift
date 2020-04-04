@@ -92,30 +92,26 @@ public class BaseViewModel: NSObject {
         handleMissingResults?(self, type, table, predicate)
     }
     
-    func fetch<T:ExpressibleByRow> (from table: String, searchId: String = "search", searchField: String? = nil, limit: Int? = nil) -> T? {
+    func fetch<T:ExpressibleByRow> (from table: String, filter: String? = nil, limit: Int? = nil) throws -> [T] {
 
-        var whereClause = ""
+        let test = filterPredicate(from: filter, asClause: true) ?? ""
         var limitClause = ""
-        let test = sql_predicate(field: searchField, search: searchId)
-
-        if let test = test {
-            whereClause = " WHERE \(test)"
-        }
 
         if let limit = limit  {
             limitClause = " LIMIT \(limit)"
         }
-        let sql: SQL = "SELECT * from \(table)\(whereClause)\(limitClause)"
-        var results: T?
-        try? db.executeRead {
-            results = try? $0.query(sql, [])
+        let sql: SQL = "SELECT * from \(table) \(test)\(limitClause)"
+        var results: [T] = []
+        try fetch(sql, []) { row in
+            if let item = try? T.init(row: row) {
+                results.append(item)
+            }
         }
-        if results == nil {
+        if results.isEmpty {
             noResultsForFetch(of: T.self, from: table, where: test)
         }
         return results
     }
-
 
     func sql_predicate(field: String?, search: String?) -> String? {
         guard let field = field, let search = search else { return nil }
@@ -247,19 +243,16 @@ public class BaseViewModel: NSObject {
             plist = json
         }
         guard let items = plist as? [Any] else { throw ViewModelError.InvalidSerialization }
-        let count = items.count
         
         try db.executeWrite {
             for item in items {
                 guard let dict = item as? [String:Any] else { continue }
                 try $0.insert(into: table, from: dict)
             }
-            trace("LOAD COMPLETE \(count) \(table)")
         }
     }
 
 }
-
 
 // MARK: SQift Method Wrappers
 
@@ -316,6 +309,9 @@ extension ViewModel {
         BaseViewModel.shared?.indentifiers(for: table, filter: filter) ?? []
     }
 
+    func fetch<T:ExpressibleByRow> (from table: String, filter: String? = nil, limit: Int? = nil) -> [T] {
+        (try? BaseViewModel.shared?.fetch(from: table, filter: filter, limit: limit)) ?? []
+    }
 }
 
 extension BaseViewModel: ViewModel {

@@ -121,6 +121,47 @@
             </objects>
             <point key="canvasLocation" x="986.95652173913049" y="123.88392857142857"/>
         </scene>
+        <!--Item-->
+        <scene sceneID="FoX-SF-RuY">
+            <objects>
+                <viewController id="auV-pW-YZT" customClass="MapViewController" customModule="BankFinder" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="9O9-hW-gE2">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="774"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="XI4-fK-jFQ">
+                                <rect key="frame" x="0.0" y="44" width="414" height="681"/>
+                                <connections>
+                                    <outlet property="delegate" destination="auV-pW-YZT" id="WxF-OA-qN4"/>
+                                </connections>
+                            </mapView>
+                        </subviews>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <constraints>
+                            <constraint firstItem="j4K-aE-l2f" firstAttribute="bottom" secondItem="XI4-fK-jFQ" secondAttribute="bottom" id="LWc-5g-ffH"/>
+                            <constraint firstItem="XI4-fK-jFQ" firstAttribute="top" secondItem="j4K-aE-l2f" secondAttribute="top" id="LjF-1M-aNV"/>
+                            <constraint firstItem="XI4-fK-jFQ" firstAttribute="leading" secondItem="j4K-aE-l2f" secondAttribute="leading" id="aCN-a1-h12"/>
+                            <constraint firstItem="j4K-aE-l2f" firstAttribute="trailing" secondItem="XI4-fK-jFQ" secondAttribute="trailing" id="hdY-pa-vCF"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="j4K-aE-l2f"/>
+                    </view>
+                    <tabBarItem key="tabBarItem" title="Item" id="jAS-7D-ldR"/>
+                    <userDefinedRuntimeAttributes>
+                        <userDefinedRuntimeAttribute type="number" keyPath="fetchLimit">
+                            <integer key="value" value="100"/>
+                        </userDefinedRuntimeAttribute>
+                        <userDefinedRuntimeAttribute type="string" keyPath="modelId" value="atm_locs"/>
+                        <userDefinedRuntimeAttribute type="string" keyPath="selectionKey" value="branch"/>
+                        <userDefinedRuntimeAttribute type="string" keyPath="filter" value="search.title"/>
+                    </userDefinedRuntimeAttributes>
+                    <connections>
+                        <outlet property="mapView" destination="XI4-fK-jFQ" id="6PR-c0-81v"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Ruy-SO-vWo" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="988" y="772"/>
+        </scene>
         <!--View Controller-->
         <scene sceneID="l8h-OE-wUv">
             <objects>
@@ -179,6 +220,7 @@
                     <connections>
                         <segue destination="q85-0U-e3B" kind="relationship" relationship="viewControllers" id="9A4-JJ-K4h"/>
                         <segue destination="frI-rO-F39" kind="relationship" relationship="viewControllers" id="SHY-1P-jkh"/>
+                        <segue destination="auV-pW-YZT" kind="relationship" relationship="viewControllers" id="QQY-O6-pSE"/>
                     </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="NPN-pR-tgA" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
