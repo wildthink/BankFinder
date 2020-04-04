@@ -57,6 +57,7 @@
                         <userDefinedRuntimeAttribute type="string" keyPath="selectionKey" value="customer"/>
                         <userDefinedRuntimeAttribute type="string" keyPath="cellIdentifier" value="main"/>
                         <userDefinedRuntimeAttribute type="string" keyPath="modelId" value="customers"/>
+                        <userDefinedRuntimeAttribute type="string" keyPath="filter" value="search.full_name"/>
                     </userDefinedRuntimeAttributes>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="xar-3v-ccS" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>

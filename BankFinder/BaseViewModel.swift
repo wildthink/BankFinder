@@ -34,12 +34,12 @@ enum ViewModelError: String, Error {
 
 @objc public protocol BaseViewModelDelegate: NSObjectProtocol {
     @objc optional func modelWillCommit(_ vm: BaseViewModel)
-    @objc optional func modelDidUpdate(_ vm: BaseViewModel, info: BaseViewModel.DBUpdateLog)
+    @objc optional func modelDidUpdate(_ vm: BaseViewModel, info: BaseViewModel.DBUpdateInfo)
 }
 
 public class BaseViewModel: NSObject {
     
-    @objc public class DBUpdateLog: NSObject {
+    @objc public class DBUpdateInfo: NSObject {
         var op: Connection.UpdateHookType
         var db: String
         var table: String
@@ -62,7 +62,7 @@ public class BaseViewModel: NSObject {
     
     init (storageLocation: StorageLocation = .inMemory) throws {
 
-        db = try AppDatabase(storageLocation: storageLocation)
+        db = try AppDatabase(storageLocation)
         super.init()
         try configureDatabase()
         if BaseViewModel.shared == nil {
@@ -70,11 +70,11 @@ public class BaseViewModel: NSObject {
         }
     }
 
-    @objc func willCommit() {
+    func didCommit() {
         delegate?.modelWillCommit?(self)
     }
 
-    @objc func didUpdate(_ log: DBUpdateLog) {
+    func didUpdate(_ log: DBUpdateInfo) {
         delegate?.modelDidUpdate?(self, info: log)
     }
 
@@ -86,10 +86,10 @@ public class BaseViewModel: NSObject {
         db.get(env: env) as? A ?? alt
     }
     
-    var handleMissingResults: ((Any.Type, _ table: String, _ predicate: String?) -> Void)?
+    var handleMissingResults: ((BaseViewModel, Any.Type, _ table: String, _ predicate: String?) -> Void)?
     
     func noResultsForFetch(of type: Any.Type, from table: String, where predicate: String?) {
-        handleMissingResults?(type, table, predicate)
+        handleMissingResults?(self, type, table, predicate)
     }
     
     func fetch<T:ExpressibleByRow> (from table: String, searchId: String = "search", searchField: String? = nil, limit: Int? = nil) -> T? {
@@ -150,26 +150,52 @@ public class BaseViewModel: NSObject {
             return nil
         }
     }
-    
-    var commitHook: Any?
-    
+        
     func configureDatabase() throws {
 
         try db.createApplicationDatabase()
 
         try db.executeWrite {
             $0.commitHook { [weak self] () -> Bool in
-                // We call the perform so we let this event complete and return
-                // before refreshing with the next state
-                self?.perform(#selector(BaseViewModel.willCommit), with: nil, afterDelay: 0)
+                guard let delegate = self?.delegate,
+                    delegate.responds(to: #selector(BaseViewModelDelegate.modelWillCommit(_:)))
+                else { return false }
+
+                DispatchQueue.main.async {
+                    self?.didCommit()
+                }
                 return false
             }
-            //     public typealias UpdateHook = (UpdateHookType, _ databaseName: String?, _ tableName: String?, _ rowID: Int64) -> Void
 
-            $0.updateHook { (op, database, table, row) in
-                let log = DBUpdateLog(op: op, db: database, table: table, row: row)
-                self.perform(#selector(BaseViewModel.didUpdate), with: log, afterDelay: 0)
+            $0.updateHook { [weak self] (op, database, table, row) in
+                guard let delegate = self?.delegate,
+                    delegate.responds(to: #selector(BaseViewModelDelegate.modelDidUpdate(_:info:)))
+                else { return }
+                
+                let log = DBUpdateInfo(op: op, db: database, table: table, row: row)
+                DispatchQueue.main.async {
+                    self?.didUpdate(log)
+                }
             }
+        }
+    }
+    
+    func load (_ name: String?, keypath: String? = nil, into table: String) throws {
+        guard let name = name else { throw ViewModelError.MissingData }
+        if name.starts(with: "http") {
+            return try load (URL(string: name), keypath: keypath, into: table)
+        }
+        if name.starts(with: "file://") {
+            return try load (URL(string: name), keypath: keypath, into: table)
+        }
+    }
+
+    func load (_ url: URL?, keypath: String? = nil, into table: String) throws {
+        guard let url = url else { throw ViewModelError.MissingData }
+        if url.isFileURL {
+            return try load(url.path, from: keypath, into: table) }
+        else {
+            return load(url: url, from: keypath, into: table)
         }
     }
 
@@ -191,26 +217,6 @@ public class BaseViewModel: NSObject {
             }
         }.resume()
     }
-
-    func load(json: NSObject, from key: String? = nil, into table: String) throws {
-
-        var plist: Any?
-
-        if let key = key, !key.isEmpty {
-            plist = json.value(forKeyPath: key)
-        } else {
-            plist = json
-        }
-        guard let items = plist as? [Any] else { throw ViewModelError.InvalidSerialization }
-
-        try db.executeWrite(.immediate) {
-            for item in items {
-                guard let dict = item as? [String:Any] else { continue }
-                try $0.insert(into: table, from: dict)
-            }
-        }
-
-    }
     
     func load (_ file: String, in bundle: Bundle = Bundle.main, from key: String? = nil, into table: String) throws {
         var path: String
@@ -227,6 +233,29 @@ public class BaseViewModel: NSObject {
         if let package = try JSONSerialization.jsonObject(with: data, options: []) as? NSObject {
             try load(json: package, from: key, into: table)
         } else { throw ViewModelError.InvalidSerialization }
+    }
+    
+    /// This method is responsible for inserting the indicated Dictionary items into
+    /// the database.
+    func load(json: NSObject, from key: String? = nil, into table: String) throws {
+
+        var plist: Any?
+
+        if let key = key, !key.isEmpty {
+            plist = json.value(forKeyPath: key)
+        } else {
+            plist = json
+        }
+        guard let items = plist as? [Any] else { throw ViewModelError.InvalidSerialization }
+        let count = items.count
+        
+        try db.executeWrite {
+            for item in items {
+                guard let dict = item as? [String:Any] else { continue }
+                try $0.insert(into: table, from: dict)
+            }
+            trace("LOAD COMPLETE \(count) \(table)")
+        }
     }
 
 }
@@ -301,7 +330,6 @@ extension BaseViewModel: ViewModel {
     }
     
     func indentifiers(for table: String, filter: String?) -> [Int] {
-        trace()
         let results = NSMutableArray()
         let sql: SQL
         if let test = filterPredicate(from: filter, asClause: true) {

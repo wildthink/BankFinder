@@ -11,7 +11,10 @@ import UIKit
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, ViewModelProvider {
 
+    var window: UIWindow?
+
     var baseViewModel: BaseViewModel = try! BaseViewModel(storageLocation: .onDisk("/Users/jason/bank.db"))
+    let loaded: NSMutableSet = NSMutableSet()
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
 
@@ -19,17 +22,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate, ViewModelProvider {
         baseViewModel.delegate = self
         let path = Bundle.main.path(forResource: "db_create", ofType: "sql")!
         try! baseViewModel.db.execute(contentsOfFile: path)
-        
-        // Populate the tables with bundled JSON data
-        try! baseViewModel.load("branches.json", in: .main, into: "branches")
-        
-        baseViewModel.handleMissingResults = { (type, table, predicate) in
+                
+        baseViewModel.handleMissingResults = { (model, type, table, predicate) in
             Swift.print (#line, "NO DATA found for", table)
+            guard !self.loaded.contains(table) else {
+                self.trace("RELOAD ATTEMPTED FOR \(table)")
+                return
+            }
             switch table {
-            case "atms", "atm":
-                 self.baseViewModel.load(url: .getATMs, from: "data", into: "atms")
-            case "customers", "customer":
-                self.baseViewModel.load(url: .getCustomers, from: "results", into: "_customers")
+            case "atms":
+                try! model.load(.getATMs, keypath: "data", into: "atms")
+                self.loaded.add(table)
+            case "branches":
+                try! model.load(.resource("branches.json"), into: "branches")
+                self.loaded.add(table)
+            case "customers":
+                try! model.load(.getCustomers, into: "_customers")
+                self.loaded.add(table)
             default:
                 Swift.print (#line, "NO WAY TO GET", table)
             }
@@ -44,38 +53,26 @@ class AppDelegate: UIResponder, UIApplicationDelegate, ViewModelProvider {
 
     // MARK: UISceneSession Lifecycle
 
-    func application(_ application: UIApplication, configurationForConnecting connectingSceneSession: UISceneSession, options: UIScene.ConnectionOptions) -> UISceneConfiguration {
-        // Called when a new scene session is being created.
-        // Use this method to select a configuration to create the new scene with.
-        return UISceneConfiguration(name: "Default Configuration", sessionRole: connectingSceneSession.role)
-    }
-
-    func application(_ application: UIApplication, didDiscardSceneSessions sceneSessions: Set<UISceneSession>) {
-        // Called when the user discards a scene session.
-        // If any sessions were discarded while the application was not running, this will be called shortly after application:didFinishLaunchingWithOptions.
-        // Use this method to release any resources that were specific to the discarded scenes, as they will not return.
-    }
+//    func application(_ application: UIApplication, configurationForConnecting connectingSceneSession: UISceneSession, options: UIScene.ConnectionOptions) -> UISceneConfiguration {
+//        // Called when a new scene session is being created.
+//        // Use this method to select a configuration to create the new scene with.
+//        return UISceneConfiguration(name: "Default Configuration", sessionRole: connectingSceneSession.role)
+//    }
+//
+//    func application(_ application: UIApplication, didDiscardSceneSessions sceneSessions: Set<UISceneSession>) {
+//        // Called when the user discards a scene session.
+//        // If any sessions were discarded while the application was not running, this will be called shortly after application:didFinishLaunchingWithOptions.
+//        // Use this method to release any resources that were specific to the discarded scenes, as they will not return.
+//    }
 }
 
 extension AppDelegate: BaseViewModelDelegate {
     func modelWillCommit(_ vm: BaseViewModel) {
         trace()
-        guard let window = SceneDelegate.
-//        vm.refresh(view: root, from: <#T##String#>, id: <#T##Int#>)
+        guard let window = window else { return }
+        window.rootViewController?.visit {
+            $0.refresh(from: vm)
+        }
     }
-}
-
-let iplist =  NSDictionary(contentsOfFile: Bundle.main.path(forResource: "Info", ofType: "plist")!)
-
-var nessie_api_key: String {
-    iplist?.value(forKey: "NessieAPIKey") as? String ?? "MissingAPIKey"
-}
-
-
-extension URL {
-    static var getATMs: URL = URL(string: "http://api.reimaginebanking.com/atms?lat=38.9283&lng=-77.1753&rad=1&key=\(nessie_api_key)")!
-
-    static var getCustomers: URL = URL(string: "http://api.reimaginebanking.com/enterprise/customers?key=\(nessie_api_key)")!
-
-    static var getAccounts: URL = URL(string: "http://api.reimaginebanking.com/customers/1/accounts?key=\(nessie_api_key)")!
+    
 }

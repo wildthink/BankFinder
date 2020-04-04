@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		966015C32437CCB600A0BF67 /* Networking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 966015C22437CCB600A0BF67 /* Networking.swift */; };
 		96965C652435134A00EAB17C /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96965C642435134A00EAB17C /* NetworkExtension.framework */; };
 		96EA41402432EA68002F20A5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96EA413F2432EA68002F20A5 /* AppDelegate.swift */; };
 		96EA41422432EA68002F20A5 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96EA41412432EA68002F20A5 /* SceneDelegate.swift */; };
@@ -45,6 +46,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		966015C22437CCB600A0BF67 /* Networking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Networking.swift; sourceTree = "<group>"; };
 		96965C622435132700EAB17C /* BankFinder.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = BankFinder.entitlements; sourceTree = "<group>"; };
 		96965C642435134A00EAB17C /* NetworkExtension.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NetworkExtension.framework; path = System/Library/Frameworks/NetworkExtension.framework; sourceTree = SDKROOT; };
 		96EA413C2432EA68002F20A5 /* BankFinder.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BankFinder.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -134,6 +136,7 @@
 				96965C622435132700EAB17C /* BankFinder.entitlements */,
 				96EA41452432EA68002F20A5 /* Main.storyboard */,
 				96EA413F2432EA68002F20A5 /* AppDelegate.swift */,
+				966015C22437CCB600A0BF67 /* Networking.swift */,
 				96EA4172243338D6002F20A5 /* db_create.sql */,
 				96EA417C2433585F002F20A5 /* Data */,
 				96EA4174243338FD002F20A5 /* Bindings.swift */,
@@ -317,6 +320,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				96EA41442432EA68002F20A5 /* ViewController.swift in Sources */,
+				966015C32437CCB600A0BF67 /* Networking.swift in Sources */,
 				96EA41802433A083002F20A5 /* TableViewController.swift in Sources */,
 				96EA41402432EA68002F20A5 /* AppDelegate.swift in Sources */,
 				96EA4175243338FD002F20A5 /* Bindings.swift in Sources */,
