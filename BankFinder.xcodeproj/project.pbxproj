@@ -25,7 +25,6 @@
 		96EA417B2433584B002F20A5 /* branches.json in Resources */ = {isa = PBXBuildFile; fileRef = 96EA417A2433584B002F20A5 /* branches.json */; };
 		96EA417E24335E51002F20A5 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 96EA417D24335E51002F20A5 /* README.md */; };
 		96EA41802433A083002F20A5 /* TableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96EA417F2433A083002F20A5 /* TableViewController.swift */; };
-		96EA41822433F870002F20A5 /* SQiftExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96EA41812433F870002F20A5 /* SQiftExtensions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -70,7 +69,6 @@
 		96EA417A2433584B002F20A5 /* branches.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = branches.json; sourceTree = "<group>"; };
 		96EA417D24335E51002F20A5 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		96EA417F2433A083002F20A5 /* TableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableViewController.swift; sourceTree = "<group>"; };
-		96EA41812433F870002F20A5 /* SQiftExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SQiftExtensions.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -142,7 +140,6 @@
 				96EA4174243338FD002F20A5 /* Bindings.swift */,
 				96EA417824333CF7002F20A5 /* BaseViewModel.swift */,
 				96EA417F2433A083002F20A5 /* TableViewController.swift */,
-				96EA41812433F870002F20A5 /* SQiftExtensions.swift */,
 				96EA417624333AC5002F20A5 /* UIKitExtensions.swift */,
 				96EA41412432EA68002F20A5 /* SceneDelegate.swift */,
 				96EA41432432EA68002F20A5 /* ViewController.swift */,
@@ -327,7 +324,6 @@
 				96EA41422432EA68002F20A5 /* SceneDelegate.swift in Sources */,
 				96EA417724333AC5002F20A5 /* UIKitExtensions.swift in Sources */,
 				96EA417924333CF7002F20A5 /* BaseViewModel.swift in Sources */,
-				96EA41822433F870002F20A5 /* SQiftExtensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

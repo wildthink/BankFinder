@@ -309,7 +309,7 @@ extension ViewModel {
     }
 
     func get<A>(env: String, default alt: A?) -> A? {
-        AppDatabase.shared.get(env: env) as? A ?? alt
+        BaseViewModel.shared?.db.get(env: env) as? A ?? alt
     }
         
     func indentifiers(for table: String, filter: String?) -> [Int] {
@@ -330,27 +330,17 @@ extension BaseViewModel: ViewModel {
     }
     
     func indentifiers(for table: String, filter: String?) -> [Int] {
-        let results = NSMutableArray()
-        let sql: SQL
-        if let test = filterPredicate(from: filter, asClause: true) {
-            sql = "SELECT id FROM \(table) \(test)"
-        } else {
-            sql = "SELECT id FROM \(table)"
+        var results: [Int64]?
+        let test = filterPredicate(from: filter, asClause: false)
+        try? db.executeRead { (c) in
+            results = try? c.rowids(for: table, where: test)
         }
-        try? BaseViewModel.shared?.db.executeRead(.deferred) {
-            try? $0.fetch(sql, []) { row in
-                if let int: Int = row.value(at: 0) {
-                    results.add(int)
-                }
-            }
+        guard let list = results, !list.isEmpty else {
+            noResultsForFetch(of: [Int].self, from: table, where: test)
+            return []
         }
-        let list = (results as? [Int]) ?? []
-        if list.isEmpty {
-            noResultsForFetch(of: [Int].self, from: table, where: filter)
-        }
-        return list
+        return list.map { Int($0) }
     }
-
 }
 
 extension UIViewController {
