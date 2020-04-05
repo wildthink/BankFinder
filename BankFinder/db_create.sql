@@ -10,9 +10,9 @@
  }
  */
 
-DROP TABLE IF EXISTS branches;
+DROP TABLE IF EXISTS _branches;
 
-CREATE TABLE IF NOT EXISTS branches (
+CREATE TABLE IF NOT EXISTS _branches (
     id INTEGER PRIMARY KEY,
     _id TEXT,
     name TEXT,
@@ -23,10 +23,23 @@ CREATE TABLE IF NOT EXISTS branches (
     geocode JSON
 );
 
+DROP VIEW IF EXISTS branches;
 
-DROP TABLE IF EXISTS atms;
+CREATE VIEW IF NOT EXISTS branches AS
+    SELECT rowid as rowid, *,
+        printf('%s %s',
+           json_extract(address, '$.street_number'),
+           json_extract(address, '$.street_name'))
+        as street_full,
+        json_extract(geocode, '$.lat') as lat,
+        json_extract(geocode, '$.lng') as lon
 
-    CREATE TABLE IF NOT EXISTS atms (
+    FROM _branches
+;
+
+DROP TABLE IF EXISTS _atms;
+
+    CREATE TABLE IF NOT EXISTS _atms (
         id INTEGER PRIMARY KEY,
         _id TEXT,
         name TEXT,
@@ -40,9 +53,9 @@ DROP TABLE IF EXISTS atms;
 
 --- Adaptor Views
 
-DROP VIEW IF EXISTS atms_x;
+DROP VIEW IF EXISTS atms;
 
-     CREATE VIEW IF NOT EXISTS atms_x AS
+     CREATE VIEW IF NOT EXISTS atms AS
          SELECT  rowid as rowid, id,
                  name,
                  address,
@@ -53,22 +66,26 @@ DROP VIEW IF EXISTS atms_x;
                  json_extract(geocode, '$.lat') as lat,
                  json_extract(geocode, '$.lng') as lon
 
-         FROM atms;
+         FROM _atms;
 
 ---
 --- Map Annotations
 
-DROP VIEW IF EXISTS atm_locs;
+DROP VIEW IF EXISTS locations;
 
-    CREATE VIEW IF NOT EXISTS atm_locs AS
+    CREATE VIEW IF NOT EXISTS locations AS
         SELECT  rowid as rowid, id,
                 name as title,
-                json_extract(address, '$.street_number') || ' '
-                || json_extract(address, '$.street_name') as subtitle,
-                json_extract(geocode, '$.lat') as lat,
-                json_extract(geocode, '$.lng') as lon
-
+                street_full as subtitle,
+                lat, lon
         FROM atms
+        UNION
+        SELECT  rowid as rowid, id,
+                name as title,
+                street_full as subtitle,
+                lat, lon
+        FROM branches
+
     ;
 --        WHERE title like (select '%' ||
 --            (select value from app where key = "search") || '%');

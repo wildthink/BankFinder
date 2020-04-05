@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9647620C243A381E009674BC /* Config.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9647620B243A381E009674BC /* Config.plist */; };
 		966015C32437CCB600A0BF67 /* Networking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 966015C22437CCB600A0BF67 /* Networking.swift */; };
 		966015CA2438252A00A0BF67 /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 966015C92438252A00A0BF67 /* MapViewController.swift */; };
 		96965C652435134A00EAB17C /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96965C642435134A00EAB17C /* NetworkExtension.framework */; };
@@ -46,6 +47,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		9647620B243A381E009674BC /* Config.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Config.plist; sourceTree = "<group>"; };
 		966015C22437CCB600A0BF67 /* Networking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Networking.swift; sourceTree = "<group>"; };
 		966015C92438252A00A0BF67 /* MapViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
 		96965C622435132700EAB17C /* BankFinder.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = BankFinder.entitlements; sourceTree = "<group>"; };
@@ -149,6 +151,7 @@
 				96EA41482432EA6C002F20A5 /* Assets.xcassets */,
 				96EA414A2432EA6C002F20A5 /* LaunchScreen.storyboard */,
 				96EA414D2432EA6C002F20A5 /* Info.plist */,
+				9647620B243A381E009674BC /* Config.plist */,
 			);
 			path = BankFinder;
 			sourceTree = "<group>";
@@ -295,6 +298,7 @@
 				96EA41492432EA6C002F20A5 /* Assets.xcassets in Resources */,
 				96EA417B2433584B002F20A5 /* branches.json in Resources */,
 				96EA41472432EA68002F20A5 /* Main.storyboard in Resources */,
+				9647620C243A381E009674BC /* Config.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

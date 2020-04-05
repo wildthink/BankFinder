@@ -22,7 +22,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, ViewModelProvider {
         baseViewModel.delegate = self
         let path = Bundle.main.path(forResource: "db_create", ofType: "sql")!
         try! baseViewModel.db.execute(contentsOfFile: path)
-                
+        try! baseViewModel.db.createApplicationDatabase(reset: true)
+        
         baseViewModel.handleMissingResults = { (model, type, table, predicate) in
             Swift.print (#line, "NO DATA found for", table)
             guard !self.loaded.contains(table) else {
@@ -31,10 +32,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, ViewModelProvider {
             }
             switch table {
             case "atms":
-                try! model.load(.getATMs, keypath: "data", into: "atms")
+                try! model.load(.getATMs, keypath: "data", into: "_atms")
                 self.loaded.add(table)
             case "branches":
-                try! model.load(.resource("branches.json"), into: "branches")
+                try! model.load(.resource("branches.json"), into: "_branches")
                 self.loaded.add(table)
             case "customers":
                 try! model.load(.getCustomers, into: "_customers")
@@ -68,7 +69,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, ViewModelProvider {
 
 extension AppDelegate: BaseViewModelDelegate {
     func modelWillCommit(_ vm: BaseViewModel) {
-        trace()
         guard let window = window else { return }
         window.rootViewController?.visit {
             $0.refresh(from: vm)

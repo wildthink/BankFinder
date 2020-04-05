@@ -57,7 +57,6 @@
                         <userDefinedRuntimeAttribute type="string" keyPath="selectionKey" value="customer"/>
                         <userDefinedRuntimeAttribute type="string" keyPath="cellIdentifier" value="main"/>
                         <userDefinedRuntimeAttribute type="string" keyPath="modelId" value="customers"/>
-                        <userDefinedRuntimeAttribute type="string" keyPath="filter" value="search.full_name"/>
                     </userDefinedRuntimeAttributes>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="xar-3v-ccS" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -148,9 +147,9 @@
                     <tabBarItem key="tabBarItem" title="Item" id="jAS-7D-ldR"/>
                     <userDefinedRuntimeAttributes>
                         <userDefinedRuntimeAttribute type="number" keyPath="fetchLimit">
-                            <integer key="value" value="100"/>
+                            <integer key="value" value="10"/>
                         </userDefinedRuntimeAttribute>
-                        <userDefinedRuntimeAttribute type="string" keyPath="modelId" value="atm_locs"/>
+                        <userDefinedRuntimeAttribute type="string" keyPath="modelId" value="locations"/>
                         <userDefinedRuntimeAttribute type="string" keyPath="selectionKey" value="branch"/>
                         <userDefinedRuntimeAttribute type="string" keyPath="filter" value="search.title"/>
                     </userDefinedRuntimeAttributes>
